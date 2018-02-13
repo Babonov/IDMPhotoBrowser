@@ -8,5 +8,6 @@ target "PhotoBrowserDemo" do
 pod 'SDWebImage'
 pod 'DACircularProgress'
 pod 'pop'
+pod 'AMImageSequenceView', :git => 'https://github.com/Babonov/AMImageSequenceView', :commit => '844703c14c1e4cd3a2da06a4b75ecfa23b539ff4'
 
 end

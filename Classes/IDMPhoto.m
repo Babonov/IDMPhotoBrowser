@@ -8,15 +8,17 @@
 
 #import "IDMPhoto.h"
 #import "IDMPhotoBrowser.h"
+#import "IDMPhoto+ImageSequence.h"
+#import <AMImageSequenceView/AMImageSequenceView.h>
 
 // Private
 @interface IDMPhoto () {
     // Image Sources
     NSString *_photoPath;
-
+    
     // Image
     UIImage *_underlyingImage;
-
+    
     // Other
     NSString *_caption;
     BOOL _loadingInProgress;
@@ -24,6 +26,7 @@
 
 // Properties
 @property (nonatomic, strong) UIImage *underlyingImage;
+@property (nonatomic, strong) AMImageSequenceView *imageSequenceView;
 
 // Methods
 - (void)imageLoadingComplete;
@@ -34,22 +37,22 @@
 @implementation IDMPhoto
 
 // Properties
-@synthesize underlyingImage = _underlyingImage, 
+@synthesize underlyingImage = _underlyingImage,
 photoURL = _photoURL,
 caption = _caption;
 
 #pragma mark Class Methods
 
 + (IDMPhoto *)photoWithImage:(UIImage *)image {
-	return [[IDMPhoto alloc] initWithImage:image];
+    return [[IDMPhoto alloc] initWithImage:image];
 }
 
 + (IDMPhoto *)photoWithFilePath:(NSString *)path {
-	return [[IDMPhoto alloc] initWithFilePath:path];
+    return [[IDMPhoto alloc] initWithFilePath:path];
 }
 
 + (IDMPhoto *)photoWithURL:(NSURL *)url {
-	return [[IDMPhoto alloc] initWithURL:url];
+    return [[IDMPhoto alloc] initWithURL:url];
 }
 
 + (NSArray *)photosWithImages:(NSArray *)imagesArray {
@@ -82,6 +85,10 @@ caption = _caption;
     NSMutableArray *photos = [NSMutableArray arrayWithCapacity:urlsArray.count];
     
     for (id url in urlsArray) {
+        if ([url isKindOfClass:[NSDictionary class]]) {
+            IDMPhoto *photo =[IDMPhoto photoWithImageSequenceURLs:url];
+            [photos addObject:photo];
+        }
         if ([url isKindOfClass:[NSURL class]]) {
             IDMPhoto *photo = [IDMPhoto photoWithURL:url];
             [photos addObject:photo];
@@ -98,24 +105,24 @@ caption = _caption;
 #pragma mark NSObject
 
 - (id)initWithImage:(UIImage *)image {
-	if ((self = [super init])) {
-		self.underlyingImage = image;
-	}
-	return self;
+    if ((self = [super init])) {
+        self.underlyingImage = image;
+    }
+    return self;
 }
 
 - (id)initWithFilePath:(NSString *)path {
-	if ((self = [super init])) {
-		_photoPath = [path copy];
-	}
-	return self;
+    if ((self = [super init])) {
+        _photoPath = [path copy];
+    }
+    return self;
 }
 
 - (id)initWithURL:(NSURL *)url {
-	if ((self = [super init])) {
-		_photoURL = [url copy];
-	}
-	return self;
+    if ((self = [super init])) {
+        _photoURL = [url copy];
+    }
+    return self;
 }
 
 #pragma mark IDMPhoto Protocol Methods
@@ -124,10 +131,18 @@ caption = _caption;
     return _underlyingImage;
 }
 
+- (AMImageSequenceView *)imageSequenceView {
+    return _imageSequenceView;
+}
+
+- (NSDictionary *)imageSequenceURLs {
+    return _imageSequenceURLs;
+}
+
 - (void)loadUnderlyingImageAndNotify {
     NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
     _loadingInProgress = YES;
-    if (self.underlyingImage) {
+    if (self.underlyingImage || self.imageSequenceView) {
         // Image already loaded
         [self imageLoadingComplete];
     } else {
@@ -136,20 +151,60 @@ caption = _caption;
             [self performSelectorInBackground:@selector(loadImageFromFileAsync) withObject:nil];
         } else if (_photoURL) {
             // Load async from web (using SDWebImageManager)
-			
-			[[SDWebImageManager sharedManager] loadImageWithURL:_photoURL options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-				CGFloat progress = ((CGFloat)receivedSize)/((CGFloat)expectedSize);
-				
-				if (self.progressUpdateBlock) {
-					self.progressUpdateBlock(progress);
-				}
-			} completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-				if (image) {
-					self.underlyingImage = image;
-				}
-				
-				[self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-			}];
+            
+            [[SDWebImageManager sharedManager] loadImageWithURL:_photoURL options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+                CGFloat progress = ((CGFloat)receivedSize)/((CGFloat)expectedSize);
+                
+                if (self.progressUpdateBlock) {
+                    self.progressUpdateBlock(progress);
+                }
+            } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                if (image) {
+                    self.underlyingImage = image;
+                }
+                
+                [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+            }];
+        } else if (_imageSequenceURLs) {
+            //Load image sequence photos
+            
+            NSMutableArray *imagesArray = [[NSMutableArray alloc] initWithCapacity:_imageSequenceURLs.count];
+            for (int i = 0; i < _imageSequenceURLs.count; i++) {
+                [imagesArray addObject:[NSNull null]];
+            }
+            __block CGFloat maxWidth = 0;
+            __block NSNumber *downloaded = 0;
+            
+            for (NSString *position in self.imageSequenceURLs) {
+                NSURL *imageURL = [self.imageSequenceURLs objectForKey:position];
+                [[SDWebImageManager sharedManager] loadImageWithURL:imageURL options:SDWebImageRetryFailed progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageUR) {
+                    
+                    @synchronized(downloaded) {
+                        downloaded = [NSNumber numberWithInteger:[downloaded integerValue] + 1];
+                    }
+                    
+                    if (image) {
+                        CGFloat currentProgress = [downloaded floatValue]/(float)imagesArray.count;
+                        if (self.progressUpdateBlock) {
+                            self.progressUpdateBlock(currentProgress);
+                        }
+                        if (image.size.width > maxWidth) { maxWidth = image.size.width; }
+                        imagesArray[position.integerValue] = image;
+                    }
+                    
+                    if ([downloaded integerValue] == imagesArray.count) {
+                        if (_imageSequenceView == nil && ![imagesArray containsObject:[NSNull null]]) {
+                            CGRect imageSequenceFrame = CGRectMake(0, kIsIPhoneX ? 79 : 50, kIsIPad ? maxWidth : kScreenWidth - 80, kScreenHeight - (kIsIPhoneX ? 79 : 50) - ((kIsIPhone4 || kIsIPhone5) ? 80 : 100));
+                            _imageSequenceView = [[AMImageSequenceView alloc] initWithImages:imagesArray frame:imageSequenceFrame];
+                            _imageSequenceView.center = CGPointMake(kScreenWidth/2, _imageSequenceView.center.y);
+                            _imageSequenceView.zoomEnabled = NO;
+                            _imageSequenceView.sensivity = 2.5;
+                        }
+                        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                    }
+                    
+                }];
+            }
         } else {
             // Failed - no source
             self.underlyingImage = nil;
@@ -161,45 +216,45 @@ caption = _caption;
 // Release if we can get it again from path or url
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
-
-	if (self.underlyingImage && (_photoPath || _photoURL)) {
-		self.underlyingImage = nil;
-	}
+    
+    if (self.underlyingImage && (_photoPath || _photoURL)) {
+        self.underlyingImage = nil;
+    }
 }
 
 #pragma mark - Async Loading
 
 /*- (UIImage *)decodedImageWithImage:(UIImage *)image {
-    CGImageRef imageRef = image.CGImage;
-    // System only supports RGB, set explicitly and prevent context error
-    // if the downloaded image is not the supported format
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    CGContextRef context = CGBitmapContextCreate(NULL,
-                                                 CGImageGetWidth(imageRef),
-                                                 CGImageGetHeight(imageRef),
-                                                 8,
-                                                 // width * 4 will be enough because are in ARGB format, don't read from the image
-                                                 CGImageGetWidth(imageRef) * 4,
-                                                 colorSpace,
-                                                 // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little
-                                                 // makes system don't need to do extra conversion when displayed.
-                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little);
-    CGColorSpaceRelease(colorSpace);
-    
-    if ( ! context) {
-        return nil;
-    }
-    
-    CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef)};
-    CGContextDrawImage(context, rect, imageRef);
-    CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-    CGContextRelease(context);
-    
-    UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
-    CGImageRelease(decompressedImageRef);
-    return decompressedImage;
-}*/
+ CGImageRef imageRef = image.CGImage;
+ // System only supports RGB, set explicitly and prevent context error
+ // if the downloaded image is not the supported format
+ CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+ 
+ CGContextRef context = CGBitmapContextCreate(NULL,
+ CGImageGetWidth(imageRef),
+ CGImageGetHeight(imageRef),
+ 8,
+ // width * 4 will be enough because are in ARGB format, don't read from the image
+ CGImageGetWidth(imageRef) * 4,
+ colorSpace,
+ // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little
+ // makes system don't need to do extra conversion when displayed.
+ kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little);
+ CGColorSpaceRelease(colorSpace);
+ 
+ if ( ! context) {
+ return nil;
+ }
+ 
+ CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef)};
+ CGContextDrawImage(context, rect, imageRef);
+ CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+ CGContextRelease(context);
+ 
+ UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
+ CGImageRelease(decompressedImageRef);
+ return decompressedImage;
+ }*/
 
 - (UIImage *)decodedImageWithImage:(UIImage *)image {
     if (image.images) {
@@ -249,12 +304,12 @@ caption = _caption;
     
     // If failed, return undecompressed image
     if (!context) return image;
-	
+    
     CGContextDrawImage(context, imageRect, imageRef);
     CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-	
+    
     CGContextRelease(context);
-	
+    
     UIImage *decompressedImage = [UIImage imageWithCGImage:decompressedImageRef scale:image.scale orientation:image.imageOrientation];
     CGImageRelease(decompressedImageRef);
     return decompressedImage;

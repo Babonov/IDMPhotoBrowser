@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "IDMPBConstants.h"
+#import <AMImageSequenceView/AMImageSequenceView.h>
 
 // Name of notification used when a photo has completed loading process
 // Used to notify browser display the image
@@ -25,7 +26,7 @@
 @required
 
 // Return underlying UIImage to be displayed
-// Return nil if the image is not immediately available (loaded into memory, preferably 
+// Return nil if the image is not immediately available (loaded into memory, preferably
 // already decompressed) and needs to be loaded from a source (cache, file, web, etc)
 // IMPORTANT: You should *NOT* use this method to initiate
 // fetching of images from any external of source. That should be handled
@@ -50,6 +51,10 @@
 // You should release any underlying (possibly large and decompressed) image data
 // as long as the image can be re-loaded (from cache, file, or URL)
 - (void)unloadUnderlyingImage;
+
+// Image Sequence for 3D models
+- (AMImageSequenceView *)imageSequenceView;
+- (NSDictionary *)imageSequenceURLs;
 
 @optional
 

@@ -33,12 +33,14 @@
 
 // Properties
 @property (nonatomic, strong) id <IDMPhotoBrowserDelegate> delegate;
+@property (nonatomic, strong) NSMutableArray *photos;
 
 // Toolbar customization
 @property (nonatomic) BOOL displayToolbar;
 @property (nonatomic) BOOL displayCounterLabel;
 @property (nonatomic) BOOL displayArrowButton;
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic) BOOL isdraggingPhoto;
 @property (nonatomic, strong) NSArray *actionButtonTitles;
 @property (nonatomic, weak) UIImage *leftArrowImage, *leftArrowSelectedImage;
 @property (nonatomic, weak) UIImage *rightArrowImage, *rightArrowSelectedImage;
@@ -92,5 +94,10 @@
 
 // Get IDMPhoto at index
 - (id<IDMPhoto>)photoAtIndex:(NSUInteger)index;
+
+// Navigation
+- (void)jumpToPageAtIndex:(NSUInteger)index;
+- (void)gotoPreviousPage;
+- (void)gotoNextPage;
 
 @end

@@ -22,6 +22,7 @@ typedef void (^IDMProgressUpdateBlock)(CGFloat progress);
 // Properties
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, strong) NSURL *photoURL;
+@property (nonatomic, strong) NSDictionary *imageSequenceURLs;
 @property (nonatomic, strong) IDMProgressUpdateBlock progressUpdateBlock;
 @property (nonatomic, strong) UIImage *placeholderImage;
 
@@ -40,4 +41,3 @@ typedef void (^IDMProgressUpdateBlock)(CGFloat progress);
 - (id)initWithURL:(NSURL *)url;
 
 @end
-

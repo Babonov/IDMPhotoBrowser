@@ -11,26 +11,25 @@
 #import "IDMTapDetectingImageView.h"
 #import "IDMTapDetectingView.h"
 
-#import <DACircularProgress/DACircularProgressView.h>
+#import "DACircularProgressView.h"
 
 @class IDMPhotoBrowser, IDMPhoto, IDMCaptionView;
 
 @interface IDMZoomingScrollView : UIScrollView <UIScrollViewDelegate, IDMTapDetectingImageViewDelegate, IDMTapDetectingViewDelegate> {
-	
-	IDMPhotoBrowser *__weak _photoBrowser;
+    
+    IDMPhotoBrowser *__weak _photoBrowser;
     id<IDMPhoto> _photo;
-	
+    
     // This view references the related caption view for simplified handling in photo browser
     IDMCaptionView *_captionView;
     
-	IDMTapDetectingView *_tapView; // for background taps
-    
-    DACircularProgressView *_progressView;
+    IDMTapDetectingView *_tapView; // for background taps
 }
 
 @property (nonatomic, strong) IDMTapDetectingImageView *photoImageView;
 @property (nonatomic, strong) IDMCaptionView *captionView;
 @property (nonatomic, strong) id<IDMPhoto> photo;
+@property (nonatomic, strong) DACircularProgressView *progressView;
 @property (nonatomic) CGFloat maximumDoubleTapZoomScale;
 
 - (id)initWithPhotoBrowser:(IDMPhotoBrowser *)browser;
