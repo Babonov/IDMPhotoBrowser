@@ -115,6 +115,7 @@
 		D1B43D541721875F00D8B807 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D1FA3A901805C340000FFE18 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DEF1811E2E5676DB0ECAA3AE /* Pods-PhotoBrowserDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotoBrowserDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-PhotoBrowserDemo/Pods-PhotoBrowserDemo.release.xcconfig"; sourceTree = "<group>"; };
+		F38FD7D72047D04900424FAE /* Defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Defines.h; sourceTree = "<group>"; };
 		F3B66BD62032D39D001F47F0 /* IDMPhoto+ImageSequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IDMPhoto+ImageSequence.h"; sourceTree = "<group>"; };
 		F3B66BD72032D39D001F47F0 /* IDMPhoto+ImageSequence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IDMPhoto+ImageSequence.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -241,9 +242,9 @@
 				D157494F178DB94900B0211A /* IDMCaptionView.m */,
 				D11464B61802FFC4005B7BC3 /* IDMPBConstants.h */,
 				D1574950178DB94900B0211A /* IDMPhoto.h */,
+				D1574951178DB94900B0211A /* IDMPhoto.m */,
 				F3B66BD62032D39D001F47F0 /* IDMPhoto+ImageSequence.h */,
 				F3B66BD72032D39D001F47F0 /* IDMPhoto+ImageSequence.m */,
-				D1574951178DB94900B0211A /* IDMPhoto.m */,
 				D1574953178DB94900B0211A /* IDMPhotoBrowser.h */,
 				D1574954178DB94900B0211A /* IDMPhotoBrowser.m */,
 				D1574955178DB94900B0211A /* IDMPhotoProtocol.h */,
@@ -255,6 +256,7 @@
 				D157495B178DB94900B0211A /* IDMZoomingScrollView.m */,
 				727988B0187B3B5400966C66 /* IDMPBLocalizations.bundle */,
 				D1574952178DB94900B0211A /* IDMPhotoBrowser.bundle */,
+				F38FD7D72047D04900424FAE /* Defines.h */,
 			);
 			name = IDMPhotoBrowser;
 			path = ../Classes;
