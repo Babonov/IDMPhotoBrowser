@@ -946,7 +946,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             [self loadAdjacentPhotosIfNecessary:photo];
         } else {
             if (photo.imageSequenceURLs && !photo.imageSequenceView) {
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:"Внимание" message:"Отсутсвует соединение с Интернет!\nПросим проверить сетевые настройки" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Внимание" message:@"Отсутсвует соединение с Интернет!\nПросим проверить сетевые настройки" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
                 [alertController addAction:action];
                 [self presentViewController:alertController animated:YES completion:nil];
