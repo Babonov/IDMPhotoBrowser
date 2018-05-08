@@ -1,10 +1,10 @@
 PODS:
   - AMImageSequenceView (1.0.1)
   - DACircularProgress (2.3.1)
-  - pop (1.0.9)
-  - SDWebImage (4.0.0):
-    - SDWebImage/Core (= 4.0.0)
-  - SDWebImage/Core (4.0.0)
+  - pop (1.0.10)
+  - SDWebImage (4.3.3):
+    - SDWebImage/Core (= 4.3.3)
+  - SDWebImage/Core (4.3.3)
 
 DEPENDENCIES:
   - AMImageSequenceView (from `https://github.com/Babonov/AMImageSequenceView`, commit `844703c14c1e4cd3a2da06a4b75ecfa23b539ff4`)
@@ -25,8 +25,8 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AMImageSequenceView: 56c7cb1c7111cdbea9cf9e75b9653c515813556b
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
+  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
 
 PODFILE CHECKSUM: 3dd1319538fbaae467524a4b728fa7c1208f3e34
 
