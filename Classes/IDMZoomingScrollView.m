@@ -101,7 +101,7 @@
     if (_photo) {
         if (_photo.imageSequenceView) {
             [self addSubview:_photo.imageSequenceView];
-            [_photo.imageSequenceView startAutomaticRotationWithTimeInteval:0.09 toLeft:NO];
+            [_photo.imageSequenceView startAutomaticRotationWithTimeInteval:0.18 toLeft:NO];
             return;
         }
         // Reset
@@ -335,6 +335,8 @@
 #pragma mark - other methods
 
 - (NSInteger)getValueOfVerticallyCenterShift {
+    if (_photoBrowser.isSingleMode) { return 0; }
+    
     if (kIsIPhoneX) { return 10; }
     if (kIsIPhone4 || kIsIPhone5) { return 15; }
     return 23;

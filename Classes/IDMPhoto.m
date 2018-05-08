@@ -179,7 +179,7 @@ caption = _caption;
                 NSURL *imageURL = [self.imageSequenceURLs objectForKey:position];
                 [[SDWebImageManager sharedManager] loadImageWithURL:imageURL options:SDWebImageRetryFailed progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageUR) {
                     
-                    @synchronized(downloaded) {
+                    @synchronized(self) {
                         downloaded = [NSNumber numberWithInteger:[downloaded integerValue] + 1];
                     }
                     
