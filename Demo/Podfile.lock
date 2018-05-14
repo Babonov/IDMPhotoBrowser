@@ -12,6 +12,12 @@ DEPENDENCIES:
   - pop
   - SDWebImage
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - DACircularProgress
+    - pop
+    - SDWebImage
+
 EXTERNAL SOURCES:
   AMImageSequenceView:
     :commit: 844703c14c1e4cd3a2da06a4b75ecfa23b539ff4
@@ -30,4 +36,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 3dd1319538fbaae467524a4b728fa7c1208f3e34
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "IDMPBConstants.h"
 #import "Defines.h"
-#import <AMImageSequenceView/AMImageSequenceView.h>
+#import "AMImageSequenceView.h"
 
 // Name of notification used when a photo has completed loading process
 // Used to notify browser display the image

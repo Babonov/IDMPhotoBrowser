@@ -9,7 +9,7 @@
 #import "IDMPhoto.h"
 #import "IDMPhotoBrowser.h"
 #import "IDMPhoto+ImageSequence.h"
-#import <AMImageSequenceView/AMImageSequenceView.h>
+#import "AMImageSequenceView.h"
 
 // Private
 @interface IDMPhoto () {
