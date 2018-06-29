@@ -3,6 +3,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 # ignoring warning from pods
 inhibit_all_warnings!
 
+use_frameworks!
+
 target "PhotoBrowserDemo" do
 
 pod 'SDWebImage'
