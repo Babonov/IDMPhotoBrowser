@@ -26,7 +26,7 @@
 #define kIsIPhone5  (kIsIPhone && kScreenMaxLength == 568.0)
 #define kIsIPhone6  (kIsIPhone && kScreenMaxLength == 667.0)
 #define kIsIPhone6P (kIsIPhone && kScreenMaxLength == 736.0)
-#define kIsIPhoneX  (kIsIPhone && kScreenMaxLength == 812.0)
+#define kIsIPhoneX  (kIsIPhone && (kScreenMaxLength == 812.0 || kScreenMaxLength == 896.0))
 
 
 #endif /* Defines_h */
